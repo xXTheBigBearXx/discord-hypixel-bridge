@@ -3,5 +3,6 @@
   "minecraft-password": "Mojang Account Password",
 
   "discord-token": "Discord Bot Token",
-  "discord-channel": "Channel ID (Should look something like 632009822572642310)"
+  "discord-channel": "Channel ID (Should look something like 632009822572642310)",
+  "discord-bot-prefix": "-"
 }
