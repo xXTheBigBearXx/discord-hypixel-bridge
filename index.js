@@ -48,9 +48,12 @@ mc.on("message", (chatMsg) => {
     }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
-        let v = msg.split(" ", 2);
+        let v = msg.split(" ");
+  //      for (var j = 0; j < v.length; j++) {
+  //          console.log(v[j]);
+   //     }
         if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-
+	if (v[2] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
         let splitMsg2 = [msg.slice(0,i), msg.slice(i+1)];
@@ -79,7 +82,7 @@ client.on("ready", () => {
 client.on("message", (message) => {
     if (message.channel.id !== config["discord-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat("/gc d. " + message.author.username.replace(" ", "") + ": " + message.content);
+    mc.chat("/gc " + client.guilds.get(config["discord-guild"]).member(message.author).displayName.replace(" ", "") + ": " + message.content);
 });
 
 client.login(config["discord-token"]);
