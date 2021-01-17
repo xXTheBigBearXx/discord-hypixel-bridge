@@ -45,13 +45,30 @@ mc.on("message", (chatMsg) => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7ca");
         return;
-    }
+	}
+	// if (msg.includes(" xXTheBigBearXx: -list")) {
+		// mc.chat("/g list");
+		// mc.chat("/gc Printing member list");
+		// let glist = msg.split(" ");
+			// for (var j = 0; j < glist.length; j++) {
+				// console.log(glist[j]);
+			// } 
+		// if (msg.includes("  ● ")) {
+			// let listmsg = msg.replace(" ●", "")
+		// let listembed = new discord.MessageEmbed()
+			// .title("Current guild members:")
+			// .description(listmsg);
+		// client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
+		// return;
+		// }
+		// return;
+	// }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
         let v = msg.split(" ");
-  //      for (var j = 0; j < v.length; j++) {
-  //          console.log(v[j]);
-   //     }
+        for (var j = 0; j < v.length; j++) {
+            console.log(v[j]);
+        }
         if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
 	if (v[2] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
@@ -77,12 +94,13 @@ mc.on("message", (chatMsg) => {
 // discord bot stuff vv
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
+	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
     if (message.channel.id !== config["discord-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat("/gc " + client.guilds.get(config["discord-guild"]).member(message.author).displayName.replace(" ", "") + ": " + message.content);
+    mc.chat("/gc " + client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
 });
 
 client.login(config["discord-token"]);
