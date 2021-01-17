@@ -41,7 +41,7 @@ mc.on("login", () => {
         console.log("Switching to guild chat. (If not already.)");
         mc.chat("/chat g");
     }, 2000);
-    mc.chat("/gc Logged in")
+    mc.chat("Logged in")
 });
 
 mc.on("message", (chatMsg) => {
@@ -52,33 +52,29 @@ mc.on("message", (chatMsg) => {
         mc.chat("/achat \u00a7ca");
         return;
     }
-    if (msg.includes(" xXTheBigBearXx: -list")) {
+    if (msg.includes(" xXTheBigBearXx:") && msg.includes(" -list")) {
         mc.chat("/g list");
-        mc.chat("Printing member list");
-        // 	let glist = msg.split(" ");
-        // 		for (var j = 0; j < glist.length; j++) {
-        // 			console.log(glist[j]);
-        // 		} 
-
-       
-        // for (var j = 0; j < listmsg.length; j++) {
-        // console.log(listmsg[j]);
-        // }
-
-       
-        // 	let listembed = new discord.MessageEmbed()
-        // 		.title("Current guild members:")
-        // 		.description(listmsg);
-        // 	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
-        // return;
-
+        mc.chat("/w xxthebigbearxx Printing member list");
         return;
     }
-    if (msg.includes("●")) {
-        let listmsg = msg.split("●");
-         listmsg.forEach((k) => {
-            console.log(listmsg[k]);
-        });
+    // if (msg.includes("●")) {
+    //     let listmsg = msg.split("●");
+    //      listmsg.forEach((k) => {
+    //         console.log(listmsg[k]);
+    //     });
+    // }
+    if (msg.includes(" invited you") && msg.includes(" party")) {
+        let p = msg.split(" ");
+        mc.chat("/p accept" + p[0])
+        setTimeout(() => {
+            mc.chat("/pc no");
+        }, 1000);
+        setTimeout(() =>{
+            mc.chat("/p leave");
+        }, 1500);
+        setTimeout(() => {
+            mc.chat("/achat \u00a7c<3");
+        }, 2000);
     }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
