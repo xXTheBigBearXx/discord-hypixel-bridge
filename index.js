@@ -65,7 +65,12 @@ mc.on("message", (chatMsg) => {
     // }
     if (msg.includes(" invited you") && msg.includes(" party")) {
         let p = msg.split(" ");
-        mc.chat("/p accept" + p[0])
+        if (p[0].includes("[")){
+            pl = p[1];
+        } else{
+            pl = p[0];
+        } 
+        mc.chat("/p accept " + p[1])
         setTimeout(() => {
             mc.chat("/pc no");
         }, 1000);
