@@ -54,7 +54,9 @@ mc.on("message", (chatMsg) => {
     }
     if (msg.includes(" xXTheBigBearXx:") && msg.includes(" -list")) {
         mc.chat("/g list");
-        mc.chat("/w xxthebigbearxx Printing member list");
+        setTimeout(() => {
+            mc.chat("/w xxthebigbearxx Printing member list");
+        }, 1000);
         return;
     }
 
@@ -70,7 +72,7 @@ mc.on("message", (chatMsg) => {
         let p = msg.split(" ");
         if (p[0].includes("[")){
             pl = p[1];
-        } else{
+        } else {
             pl = p[0];
         } 
         mc.chat("/p accept " + p[1])
@@ -83,6 +85,7 @@ mc.on("message", (chatMsg) => {
         setTimeout(() => {
             mc.chat("/achat \u00a7c<3");
         }, 2000);
+        return;
     }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
