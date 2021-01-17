@@ -35,6 +35,10 @@ mc.on("login", () => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7c<3");
     }, 1000);
+    setTimeout(() => {
+        console.log("Switching to guild chat. (If not already.)");
+        mc.chat("/chat g");
+    }, 2000);
     mc.chat("/gc Logged in")
 });
 
@@ -46,31 +50,34 @@ mc.on("message", (chatMsg) => {
         mc.chat("/achat \u00a7ca");
         return;
 	}
-	// if (msg.includes(" xXTheBigBearXx: -list")) {
-		// mc.chat("/g list");
-		// mc.chat("/gc Printing member list");
-		// let glist = msg.split(" ");
-			// for (var j = 0; j < glist.length; j++) {
-				// console.log(glist[j]);
-			// } 
-		// if (msg.includes("  ● ")) {
-			// let listmsg = msg.replace(" ●", "")
-		// let listembed = new discord.MessageEmbed()
-			// .title("Current guild members:")
-			// .description(listmsg);
-		// client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
-		// return;
-		// }
-		// return;
-	// }
+	if (msg.includes(" xXTheBigBearXx: -list")) {
+		mc.chat("/g list");
+		mc.chat("Printing member list");
+	// 	let glist = msg.split(" ");
+	// 		for (var j = 0; j < glist.length; j++) {
+	// 			console.log(glist[j]);
+	// 		} 
+		if (msg.includes("  ● ")) {
+            let listmsg = msg.split(" ●");
+            for (var j = 0; j < listmsg.length; j++) {
+            console.log(listmsg[j]);
+            }
+	// 	let listembed = new discord.MessageEmbed()
+	// 		.title("Current guild members:")
+	// 		.description(listmsg);
+	// 	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
+		return;
+		}
+	// 	return;
+	}
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
         let v = msg.split(" ");
-        for (var j = 0; j < v.length; j++) {
-            console.log(v[j]);
-        }
+        // for (var j = 0; j < v.length; j++) {
+        //     console.log(v[j]);
+        // }
         if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-	if (v[2] == "GuildB0t") return;
+	if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
         let splitMsg2 = [msg.slice(0,i), msg.slice(i+1)];
