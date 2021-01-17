@@ -60,6 +60,7 @@ mc.on("message", (chatMsg) => {
 
     if (msg.includes("●")) {
         console.log("1")
+        return;
     //     let listmsg = msg.split("●");
     //      listmsg.forEach((k) => {
     //         console.log(listmsg[k]);
