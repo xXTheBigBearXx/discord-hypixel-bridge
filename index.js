@@ -58,16 +58,20 @@ mc.on("message", (chatMsg) => {
 	// 			console.log(glist[j]);
     // 		} 
     
-        let listmsg = msg.split(" ●");
-        for (var j = 0; j < listmsg.length; j++) {
-        console.log(listmsg[j]);
+        let listmsg = msg.split(" ");
+        // for (var j = 0; j < listmsg.length; j++) {
+        // console.log(listmsg[j]);
+        // }
         
+        listmsg.forEach((k) => {
+            console.log(listmsg[k]);
+        });
 	// 	let listembed = new discord.MessageEmbed()
 	// 		.title("Current guild members:")
 	// 		.description(listmsg);
 	// 	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
 		// return;
-		}
+		
 		return;
 	}
 
