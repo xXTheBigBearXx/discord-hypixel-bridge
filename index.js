@@ -3,7 +3,9 @@ const discord = require("discord.js");
 const config = require("./config.json");
 require("colors");
 
-const client = new discord.Client({autoReconnect: true});
+const client = new discord.Client({
+    autoReconnect: true
+});
 const options = {
     host: 'mc.hypixel.net',
     port: 25565,
@@ -49,31 +51,35 @@ mc.on("message", (chatMsg) => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7ca");
         return;
-	}
-	if (msg.includes(" xXTheBigBearXx: -list")) {
-		mc.chat("/g list");
-		mc.chat("Printing member list");
-	// 	let glist = msg.split(" ");
-	// 		for (var j = 0; j < glist.length; j++) {
-	// 			console.log(glist[j]);
-    // 		} 
-    
-        let listmsg = msg.split(" ");
+    }
+    if (msg.includes(" xXTheBigBearXx: -list")) {
+        mc.chat("/g list");
+        mc.chat("Printing member list");
+        // 	let glist = msg.split(" ");
+        // 		for (var j = 0; j < glist.length; j++) {
+        // 			console.log(glist[j]);
+        // 		} 
+
+       
         // for (var j = 0; j < listmsg.length; j++) {
         // console.log(listmsg[j]);
         // }
-        
-        listmsg.forEach((k) => {
+
+       
+        // 	let listembed = new discord.MessageEmbed()
+        // 		.title("Current guild members:")
+        // 		.description(listmsg);
+        // 	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
+        // return;
+
+        return;
+    }
+    if (msg.includes("●")) {
+        let listmsg = msg.split(" ●");
+         listmsg.forEach((k) => {
             console.log(listmsg[k]);
         });
-	// 	let listembed = new discord.MessageEmbed()
-	// 		.title("Current guild members:")
-	// 		.description(listmsg);
-	// 	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(listembed);
-		// return;
-		
-		return;
-	}
+    }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
         let v = msg.split(" ");
@@ -81,15 +87,15 @@ mc.on("message", (chatMsg) => {
         //     console.log(v[j]);
         // }
         if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-	if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
+        if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
-        let splitMsg2 = [msg.slice(0,i), msg.slice(i+1)];
+        let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
         let sender, sentMsg;
         if (splitMsg[2].includes("[")) {
-            sender = splitMsg[3].replace(":","");
+            sender = splitMsg[3].replace(":", "");
         } else {
-            sender = splitMsg[2].replace(":","");
+            sender = splitMsg[2].replace(":", "");
         }
         sentMsg = splitMsg2[1];
 
@@ -105,7 +111,7 @@ mc.on("message", (chatMsg) => {
 // discord bot stuff vv
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
-	client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).sendMessage("Logged In.");
+    client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
