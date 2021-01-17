@@ -57,12 +57,14 @@ mc.on("message", (chatMsg) => {
         mc.chat("/w xxthebigbearxx Printing member list");
         return;
     }
-    // if (msg.includes("●")) {
+
+    if (msg.includes("●")) {
+        console.log("1")
     //     let listmsg = msg.split("●");
     //      listmsg.forEach((k) => {
     //         console.log(listmsg[k]);
     //     });
-    // }
+    }
     if (msg.includes(" invited you") && msg.includes(" party")) {
         let p = msg.split(" ");
         if (p[0].includes("[")){
@@ -87,7 +89,7 @@ mc.on("message", (chatMsg) => {
         // for (var j = 0; j < v.length; j++) {
         //     console.log(v[j]);
         // }
-        if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
+        // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
         if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
