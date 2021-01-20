@@ -14,7 +14,7 @@ const options = {
     password: config["minecraft-password"],
 };
 
-// minecraft bot stuff vv
+// Minecraft bot
 let mc;
 (function init() {
     console.log("Logging in.");
@@ -52,79 +52,96 @@ mc.on("message", (chatMsg) => {
         mc.chat("/achat \u00a7ca");
         return;
     }
-    if (msg.includes(" xXTheBigBearXx:") && msg.includes(" -list")) {
-        mc.chat("/g list");
-        setTimeout(() => {
-            mc.chat("/w xxthebigbearxx Printing member list");
-        }, 1000);
-        return;
-    }
-
-    if (msg.includes("●")) {
-        console.log("1")
-        return;
-    //     let listmsg = msg.split("●");
-    //      listmsg.forEach((k) => {
-    //         console.log(listmsg[k]);
-    //     });
-    }
-    if (msg.includes(" invited you") && msg.includes(" party")) {
-        let p = msg.split(" ");
-        if (p[0].includes("[")){
-            pl = p[1];
-        } else {
-            pl = p[0];
-        } 
-        mc.chat("/p accept " + p[1])
-        setTimeout(() => {
-            mc.chat("/pc no");
-        }, 1000);
-        setTimeout(() =>{
-            mc.chat("/p leave");
-        }, 1500);
-        setTimeout(() => {
-            mc.chat("/achat \u00a7c<3");
-        }, 2000);
-        return;
-    }
 
     if (msg.startsWith("Guild >") && msg.includes(":")) {
         let v = msg.split(" ");
+        // Debug code 
         // for (var j = 0; j < v.length; j++) {
         //     console.log(v[j]);
         // }
+        
         // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
         if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
-        let splitMsg = msg.split(" ");
-        let i = msg.indexOf(":");
-        let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
-        let sender, sentMsg;
-        if (splitMsg[2].includes("[")) {
-            sender = splitMsg[3].replace(":", "");
+        // Login messages
+        if (v.length == 4) {
+            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + v[3]);
         } else {
-            sender = splitMsg[2].replace(":", "");
+            let splitMsg = msg.split(" ");
+            let i = msg.indexOf(":");
+            let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
+            let sender, sentMsg;
+            if (splitMsg[2].includes("[")) {
+                sender = splitMsg[3].replace(":", "");
+            } else {
+                sender = splitMsg[2].replace(":", "");
+            }
+            sentMsg = splitMsg2[1];
+
+            let embed = new discord.RichEmbed()
+                .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
+                .setColor("GREEN");
+
+            
+            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
         }
-        sentMsg = splitMsg2[1];
-
-        let embed = new discord.RichEmbed()
-            .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
-            .setColor("GREEN");
-
-        //channel.send(embed);
-        client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(embed);
     }
+
+    // Party accepting and responding.
+    // if (msg.includes(" invited you") && msg.includes(" party")) {
+    //     let p = msg.split(" ");
+    //     if (p[0].includes("[")){
+    //         pl = p[1];
+    //     } else {
+    //         pl = p[0];
+    //     } 
+    //     mc.chat("/p accept " + pl)
+    //     setTimeout(() => {
+    //         mc.chat("/pc no");
+    //     }, 1000);
+    //     setTimeout(() =>{
+    //         mc.chat("/p leave");
+    //     }, 1500);
+    //     setTimeout(() => {
+    //         mc.chat("/achat \u00a7c<3");
+    //     }, 2000);
+    //     return;
+    // }
+
+    // Guild Quest completion.
+    if (msg.startsWith("The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
+        let q = msg.split(" ");
+        client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The guild has just completed Tier " + q[5] + " of this week's guild quest! GG!");
+    }
+
+    // Join/Leave Messages
+    if (message.endsWith("the guild!")) {
+        let j = msg.split(" ");
+        if (msg.startsWith("[")) {
+            if (j[2] == "joined") {
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[1] + " joined the guild.");
+        } else {
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[1] + " left the guild.");
+        }
+    } else {
+        if (j[1] == "joined") {
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[0] + " joined the guild.");
+        } else {
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[0] + " left the guild.");
+        }
+    }
+}
 });
 
-// discord bot stuff vv
+// Discord bot
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
-    client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).sendMessage("Logged In.");
+    client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
-    if (message.channel.id !== config["discord-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
+    if (message.channel.id !== config["chat-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat("/gc " + client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
+    mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
 });
 
 client.login(config["discord-token"]);
