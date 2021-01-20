@@ -114,7 +114,7 @@ mc.on("message", (chatMsg) => {
     }
 
     // Join/Leave Messages
-    if (message.endsWith("the guild!")) {
+    if (msg.endsWith("the guild!")) {
         let j = msg.split(" ");
         if (msg.startsWith("[")) {
             if (j[2] == "joined") {
