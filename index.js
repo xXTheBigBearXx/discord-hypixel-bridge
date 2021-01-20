@@ -53,7 +53,7 @@ mc.on("message", (chatMsg) => {
         return;
     }
 
-    if (msg.startsWith("Guild >") && msg.includes(":")) {
+    if (msg.startsWith("Guild >")) {
         let v = msg.split(" ");
         // Debug code 
         // for (var j = 0; j < v.length; j++) {
@@ -63,7 +63,7 @@ mc.on("message", (chatMsg) => {
         // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
         if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         // Login messages
-        if (v.length == 3) {
+        if (v.length == 4) {
             client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + v[3]);
         } else {
             let splitMsg = msg.split(" ");
