@@ -115,7 +115,7 @@ mc.on("message", (chatMsg) => {
     }
 
     // Guild Level up.
-    if (msg.contains(" The Guild has reached Level")) {
+    if (msg.includes(" The Guild has reached Level")) {
         client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("Guild Level up.");
         // let l = msg.split(" ");
         // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The Guild has just reached level " + l[5] + "! GG!");
