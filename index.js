@@ -59,7 +59,7 @@ mc.on("message", (chatMsg) => {
         // for (var j = 0; j < v.length; j++) {
         //     console.log(v[j]);
         // }
-        
+
         // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
         if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         // Login messages
@@ -81,7 +81,7 @@ mc.on("message", (chatMsg) => {
                 .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
                 .setColor("GREEN");
 
-            
+
             client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
         }
     }
@@ -108,30 +108,36 @@ mc.on("message", (chatMsg) => {
     // }
 
     // Guild Quest completion.
-    if (msg.startsWith("The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
-        let q = msg.split(" ");
-        client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The guild has just completed Tier " + q[5] + " of this week's guild quest! GG!");
+    if (msg.startsWith(" The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
+        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("Guild quest completed.");
+        // let q = msg.split(" ");
+        // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The guild has just completed Tier " + q[5] + " of this week's guild quest! GG!");
+    }
+
+    // Guild Level up.
+    if (msg.contains(" The Guild has reached Level")) {
+        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("Guild Level up.");
+        // let l = msg.split(" ");
+        // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The Guild has just reached level " + l[5] + "! GG!");
     }
 
     // Join/Leave Messages
     if (msg.endsWith("the guild!")) {
         let j = msg.split(" ");
+        var k;
         if (msg.startsWith("[")) {
-            if (j[2] == "joined") {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[1] + " joined the guild.");
-            mc.chat("Welcome " + j[1] + "!");
+            k = 1;
         } else {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[1] + " left the guild.");
+            k = 0;
         }
-    } else {
-        if (j[1] == "joined") {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[0] + " joined the guild.");
-            mc.chat("Welcome " + j[0] + "!");
+
+        if (j[k++] == "joined") {
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
+            mc.chat("Welcome " + j[k] + "!");
         } else {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[0] + " left the guild.");
+            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " left the guild.");
         }
     }
-}
 });
 
 // Discord bot
