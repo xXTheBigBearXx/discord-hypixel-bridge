@@ -108,15 +108,15 @@ mc.on("message", (chatMsg) => {
     // }
 
     // Guild Quest completion.
-    if (msg.startsWith(" The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
-        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("Guild quest completed.");
+    if (msg.includes(" The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
+        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("**Debug:** Guild quest completed.");
         // let q = msg.split(" ");
         // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The guild has just completed Tier " + q[5] + " of this week's guild quest! GG!");
     }
 
     // Guild Level up.
     if (msg.includes(" The Guild has reached Level")) {
-        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("Guild Level up.");
+        client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage("**Debug:** Guild Level up.");
         // let l = msg.split(" ");
         // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The Guild has just reached level " + l[5] + "! GG!");
     }
@@ -124,14 +124,14 @@ mc.on("message", (chatMsg) => {
     // Join/Leave Messages
     if (msg.endsWith("the guild!")) {
         let j = msg.split(" ");
-        var k;
+        var k; 
         if (msg.startsWith("[")) {
             k = 1;
         } else {
             k = 0;
         }
 
-        if (j[k++] == "joined") {
+        if (j[k+1] == "joined") {
             client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
             mc.chat("Welcome " + j[k] + "!");
         } else {
