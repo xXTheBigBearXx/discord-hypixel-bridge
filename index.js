@@ -30,6 +30,7 @@ let mc;
 
 let uuid;
 let name;
+let playersonline = 0;
 mc.on("login", () => {
     uuid = mc._client.session.selectedProfile.id;
     name = mc._client.session.selectedProfile.name;
@@ -65,6 +66,11 @@ mc.on("message", (chatMsg) => {
         // Login messages
         if (v.length == 4) {
             client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + " " + v[3]);
+            if (v[3] == "joined.") {
+                playersonline++
+            } else {
+                playersonline--
+            }
         } else {
             let splitMsg = msg.split(" ");
             let i = msg.indexOf(":");
@@ -124,14 +130,14 @@ mc.on("message", (chatMsg) => {
     // Join/Leave Messages
     if (msg.endsWith("the guild!")) {
         let j = msg.split(" ");
-        var k; 
+        var k;
         if (msg.startsWith("[")) {
             k = 1;
         } else {
             k = 0;
         }
 
-        if (j[k+1] == "joined") {
+        if (j[k + 1] == "joined") {
             client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
             mc.chat("Welcome " + j[k] + "!");
         } else {
@@ -147,9 +153,21 @@ client.on("ready", () => {
 });
 
 client.on("message", (message) => {
-    if (message.channel.id !== config["chat-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
+    let args = message.content.split(' ');
+    if (message.channel.id !== config["chat-channel"] || message.author.bot) return;
+    if (message.content.startsWith(config["discord-bot-prefix"])) {
+        if (message.content.startsWith("-setonline") && message.author.id == "109246144046972928") {
+            playersonline = args[1];
+        }
+        if (message.content.startsWith("-list")) {
+            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("There are currently " + playersonline + " players online!");
+        }
+        return;
+    }
+    if (message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
     mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
+
 });
 
 client.login(config["discord-token"]);
