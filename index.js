@@ -53,7 +53,7 @@ mc.on("message", (chatMsg) => {
         return;
     }
 
-    if (msg.startsWith("Guild >") {
+    if (msg.startsWith("Guild >")) {
         let v = msg.split(" ");
         // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
         if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
@@ -75,6 +75,23 @@ mc.on("message", (chatMsg) => {
 
         client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
     }
+        // Join/Leave Messages
+    if (msg.endsWith("the guild!")) {
+            let j = msg.split(" ");
+            var k;
+            if (msg.startsWith("[")) {
+                k = 1;
+            } else {
+                k = 0;
+            }
+    
+            if (j[k + 1] == "joined") {
+                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
+                mc.chat("Welcome " + j[k] + "!");
+            } else {
+                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " left the guild.");
+            }
+        }
 });
 
 // Discord Bot
