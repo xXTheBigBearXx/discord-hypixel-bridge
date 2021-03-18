@@ -3,7 +3,9 @@ const discord = require("discord.js");
 const config = require("./config.json");
 require("colors");
 
-const client = new discord.Client({autoReconnect: true});
+const client = new discord.Client({
+    autoReconnect: true
+});
 const options = {
     host: 'mc.hypixel.net',
     port: 25565,
@@ -12,7 +14,7 @@ const options = {
     password: config["minecraft-password"],
 };
 
-// minecraft bot stuff vv
+// Minecraft Bot
 let mc;
 (function init() {
     console.log("Logging in.");
@@ -35,7 +37,11 @@ mc.on("login", () => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7c<3");
     }, 1000);
-    mc.chat("/gc Logged in")
+    setTimeout(() => {
+        console.log("Switching to guild chat. (If not already.)");
+          mc.chat("/chat g");
+    }, 2000);
+     mc.chat("Logged in")
 });
 
 mc.on("message", (chatMsg) => {
@@ -47,21 +53,18 @@ mc.on("message", (chatMsg) => {
         return;
     }
 
-    if (msg.startsWith("Guild >") && msg.includes(":")) {
+    if (msg.startsWith("Guild >") {
         let v = msg.split(" ");
-  //      for (var j = 0; j < v.length; j++) {
-  //          console.log(v[j]);
-   //     }
-        if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-	if (v[2] == "GuildB0t") return;
+        // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
+        if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
-        let splitMsg2 = [msg.slice(0,i), msg.slice(i+1)];
+        let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
         let sender, sentMsg;
         if (splitMsg[2].includes("[")) {
-            sender = splitMsg[3].replace(":","");
+            sender = splitMsg[3].replace(":", "");
         } else {
-            sender = splitMsg[2].replace(":","");
+            sender = splitMsg[2].replace(":", "");
         }
         sentMsg = splitMsg2[1];
 
@@ -69,20 +72,21 @@ mc.on("message", (chatMsg) => {
             .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
             .setColor("GREEN");
 
-        //channel.send(embed);
-        client.guilds.get(config["discord-guild"]).channels.get(config["discord-channel"]).send(embed);
+
+        client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
     }
 });
 
-// discord bot stuff vv
+// Discord Bot
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
+    client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
     if (message.channel.id !== config["discord-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat("/gc " + client.guilds.get(config["discord-guild"]).member(message.author).displayName.replace(" ", "") + ": " + message.content);
+    mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
 });
 
 client.login(config["discord-token"]);
