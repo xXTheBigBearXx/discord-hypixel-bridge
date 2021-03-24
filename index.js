@@ -16,17 +16,13 @@ const options = {
 
 // Minecraft Bot
 let mc;
-(function init() {
-    console.log("Logging in.");
-    mc = mineflayer.createBot(options);
-    mc._client.once("session", session => options.session = session);
-    mc.once("end", () => {
-        setTimeout(() => {
-            console.log("Connection failed. Retrying..");
-            init();
-        }, 60000);
-    });
-}());
+
+mc = mineflayer.createBot(options);
+mc._client.once("session", session => options.session = session);
+mc.once("end", () => {
+        console.log("Connection failed.");
+        process.exit(0);
+});
 
 let uuid;
 let name;
@@ -56,7 +52,10 @@ mc.on("message", (chatMsg) => {
     if (msg.startsWith("Guild >")) {
         let v = msg.split(" ");
         // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-        if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
+        if (v[2] == "Bot IGN" || v[3] == "Bot IGN") return;
+        if (v.length == 4) {
+            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + " " + v[3]);
+        } else {
         let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
         let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
@@ -74,7 +73,7 @@ mc.on("message", (chatMsg) => {
 
 
         client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
-    }
+    }}
         // Join/Leave Messages
     if (msg.endsWith("the guild!")) {
             let j = msg.split(" ");
