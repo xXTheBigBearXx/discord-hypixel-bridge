@@ -9,7 +9,7 @@ const client = new discord.Client({
 const options = {
     host: 'mc.hypixel.net',
     port: 25565,
-    version: '1.8.9',
+    version: '1.12.2',
     username: config["minecraft-username"],
     password: config["minecraft-password"],
 };
@@ -24,11 +24,7 @@ mc.once("end", () => {
         process.exit(0);
 });
 
-let uuid;
-let name;
 mc.on("login", () => {
-    uuid = mc._client.session.selectedProfile.id;
-    name = mc._client.session.selectedProfile.name;
     setTimeout(() => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7c<3");
@@ -50,25 +46,22 @@ mc.on("message", (chatMsg) => {
     }
 
     if (msg.startsWith("Guild >")) {
-        let v = msg.split(" ");
-        // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-        if (v[2] == "Bot IGN" || v[3] == "Bot IGN") return;
-        if (v.length == 4) {
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + " " + v[3]);
+        let msgParts = msg.split(" ");
+        if (msgParts[2] == mc.username + ":" || msgParts[3] == mc.username +":") return;
+        if (msgParts.length == 4 && !msg.includes(":")) {
+            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(msgParts[2] + " " + msgParts[3]);
         } else {
-        let splitMsg = msg.split(" ");
         let i = msg.indexOf(":");
-        let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
-        let sender, sentMsg;
-        if (splitMsg[2].includes("[")) {
-            sender = splitMsg[3].replace(":", "");
+        let sentMsg = [msg.slice(0, i), msg.slice(i + 1)];
+        let sender;
+        if (msgParts[2].includes("[")) {
+            sender = msgParts[3].replace(":", "");
         } else {
-            sender = splitMsg[2].replace(":", "");
+            sender = msgParts[2].replace(":", "");
         }
-        sentMsg = splitMsg2[1];
 
         let embed = new discord.RichEmbed()
-            .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
+            .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
             .setColor("GREEN");
 
 
@@ -76,20 +69,24 @@ mc.on("message", (chatMsg) => {
     }}
         // Join/Leave Messages
     if (msg.endsWith("the guild!")) {
-            let j = msg.split(" ");
-            var k;
+            let msgParts = msg.split(" ");
+            var i;
+            if (msg.includes(":")) return;
             if (msg.startsWith("[")) {
-                k = 1;
+                i = 1;
             } else {
-                k = 0;
+                i = 0;
             }
     
-            if (j[k + 1] == "joined") {
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
-                mc.chat("Welcome " + j[k] + "!");
+            if (msgParts[i + 1] == "joined") {
+                console.log(msgParts[i])
+                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " joined the guild.");
+                mc.chat("Welcome " + msgParts[i] + "!");
             } else {
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " left the guild.");
-            }
+                console.log(msgParts[i])
+                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " left the guild.");
+                mc.chat("F")
+            } 
         }
 });
 
@@ -100,7 +97,7 @@ client.on("ready", () => {
 });
 
 client.on("message", (message) => {
-    if (message.channel.id !== config["discord-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
+    if (message.channel.id !== config["chat-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
     mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
 });
