@@ -7,9 +7,10 @@ const client = new discord.Client({
     autoReconnect: true
 });
 const options = {
-    host: 'mc.hypixel.net',
-    port: 25565,
-    version: '1.12.2',
+    host: config["server-ip"],
+    port: config["server-port"],
+    auth: config["auth-type"],
+    version: config["minecraft-version"],
     username: config["minecraft-username"],
     password: config["minecraft-password"],
 };
