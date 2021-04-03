@@ -48,7 +48,7 @@ mc.on("message", (chatMsg) => {
 
     if (msg.startsWith("Guild >")) {
         let msgParts = msg.split(" ");
-        if (msgParts[2] == mc.username + ":" || msgParts[3] == mc.username +":") return;
+        if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
         if (msgParts.length == 4 && !msg.includes(":")) {
             client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(msgParts[2] + " " + msgParts[3]);
         } else {
