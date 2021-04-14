@@ -1,20 +1,14 @@
 const mineflayer = require("mineflayer");
 const discord = require("discord.js");
-const config = require("./config.json");
-const webhookClient = new discord.WebhookClient(config.webhookID, config.webhookToken);
+const config = require("./config/config.json");
+const options = require("./config/minecraft.json");
+const bot = require("./config/discord.json");
 require("colors");
 
 const client = new discord.Client({
     autoReconnect: true
 });
-const options = {
-    host: config["server-ip"],
-    port: config["server-port"],
-    auth: config["auth-type"],
-    version: config["minecraft-version"],
-    username: config["minecraft-username"],
-    password: config["minecraft-password"],
-};
+const webhookClient = new discord.WebhookClient(bot.webhookID, bot.webhookToken);
 
 // Minecraft Bot
 var currentPlayers = 0;
@@ -29,7 +23,7 @@ mc.once("end", () => {
 mc.on("login", () => {
     setTimeout(() => {
         console.log("Sending to limbo.");
-        mc.chat("/achat \u00a7c<3");
+        // mc.chat("/achat \u00a7c<3");
     }, 1000);
     setTimeout(() => {
         console.log("Switching to guild chat. (If not already.)");
@@ -43,8 +37,6 @@ mc.on("login", () => {
     }, 4000);
 });
 
-
-
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
     let msgParts = msg.split(" ");
@@ -53,7 +45,7 @@ mc.on("message", (chatMsg) => {
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
         if (msgParts.length == 4 && !msg.includes(":")) {
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(msgParts[2] + " " + msgParts[3]);
+            client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage(msgParts[2] + " " + msgParts[3]);
             switch (msgParts[3]) {
                 case "joined.":
                     onlineMembers++
@@ -81,7 +73,7 @@ mc.on("message", (chatMsg) => {
                 let embed = new discord.RichEmbed()
                     .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
                     .setColor("GREEN");
-                client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
+                client.guilds.get(bot.guildID).channels.get(bot.channelID).send(embed);
             }
         }
     }
@@ -112,15 +104,15 @@ mc.on("message", (chatMsg) => {
 
         switch (msgParts[i + 1]) {
             case "joined":
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " joined the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " joined the guild.");
                 mc.chat("Welcome " + msgParts[i] + "!");
                 break;
             case "left":
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " left the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " left the guild.");
                 mc.chat("F");
                 break;
             case "was":
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
                 break;
         }
@@ -130,13 +122,13 @@ mc.on("message", (chatMsg) => {
 // Discord Bot
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
-    client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("Logged In.");
+    client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
-    if (message.channel.id !== config["chat-channel"] || message.author.bot || message.content.startsWith(config["discord-bot-prefix"])) return;
+    if (message.channel.id !== bot.channelID || message.author.bot || message.content.startsWith(config.prefix)) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
+    mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
 });
 
-client.login(config["discord-token"]);
+client.login(bot.token);

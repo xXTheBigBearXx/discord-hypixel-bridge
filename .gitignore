@@ -89,6 +89,8 @@ typings/
 
 # Project Files
 .idea/
-config
+config.json
+discord.json
+minecraft.json
 package-lock.json
 
