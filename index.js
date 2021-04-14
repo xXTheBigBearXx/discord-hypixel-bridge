@@ -16,12 +16,10 @@ const options = {
 };
 
 // Minecraft Bot
-let mc;
 var currentPlayers = 0;
 var onlineMembers = 0;
 
-mc = mineflayer.createBot(options);
-mc._client.once("session", session => options.session = session);
+let mc = mineflayer.createBot(options);
 mc.once("end", () => {
     console.log("Connection failed.");
     process.exit(0);
@@ -48,9 +46,8 @@ mc.on("login", () => {
 
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
-    console.log("Minecraft: ".brightGreen + msg);
-
     let msgParts = msg.split(" ");
+    console.log("Minecraft: ".brightGreen + msg);
 
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
@@ -61,7 +58,7 @@ mc.on("message", (chatMsg) => {
                     onlineMembers++
                     break;
                 case "left.":
-                    --onlineMembers
+                    onlineMembers--
                     break;
             }
         } else {
@@ -115,8 +112,8 @@ mc.on("message", (chatMsg) => {
                 client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " left the guild.");
                 mc.chat("F");
                 break;
-            case "was": // [Rank] Name was kicked from the guild by [Rank] Name!
-                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " was kicked from the guild.");
+            case "was":
+                client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
                 break;
         }
