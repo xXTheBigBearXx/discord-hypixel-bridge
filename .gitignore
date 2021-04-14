@@ -89,5 +89,6 @@ typings/
 
 # Project Files
 .idea/
-config.json
+config
 package-lock.json
+
