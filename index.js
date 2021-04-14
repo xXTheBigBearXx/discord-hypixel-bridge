@@ -1,6 +1,7 @@
 const mineflayer = require("mineflayer");
 const discord = require("discord.js");
 const config = require("./config.json");
+const webhookClient = new discord.WebhookClient(config.webhookID, config.webhookToken);
 require("colors");
 
 const client = new discord.Client({
@@ -71,11 +72,17 @@ mc.on("message", (chatMsg) => {
                 sender = msgParts[2].replace(":", "");
             }
 
-            let embed = new discord.RichEmbed()
-                .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
-                .setColor("GREEN");
-
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
+            if (config.useWebhook == true) {
+                webhookClient.send(sentMsg[1], {
+                    username: sender,
+                    avatarURL: 'https://www.mc-heads.net/avatar/' + sender,
+                });
+            } else {
+                let embed = new discord.RichEmbed()
+                    .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
+                    .setColor("GREEN");
+                client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
+            }
         }
     }
 
