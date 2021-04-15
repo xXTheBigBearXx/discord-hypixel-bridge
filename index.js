@@ -23,7 +23,7 @@ mc.once("end", () => {
 mc.on("login", () => {
     setTimeout(() => {
         console.log("Sending to limbo.");
-        // mc.chat("/achat \u00a7c<3");
+        mc.chat("/achat \u00a7c<3");
     }, 1000);
     setTimeout(() => {
         console.log("Switching to guild chat. (If not already.)");
