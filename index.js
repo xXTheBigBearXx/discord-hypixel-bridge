@@ -65,13 +65,13 @@ mc.on("message", (chatMsg) => {
             }
 
             if (config.useWebhook == true) {
-                webhookClient.send(sentMsg[1], {
+                webhookClient.send(sentMsg[1].replace('@','@/'), {
                     username: sender,
                     avatarURL: 'https://www.mc-heads.net/avatar/' + sender,
                 });
             } else {
                 let embed = new discord.RichEmbed()
-                    .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
+                    .setAuthor(sender + ": " + sentMsg[1].replace('@','@/'), "https://www.mc-heads.net/avatar/" + sender)
                     .setColor("GREEN");
                 client.guilds.get(bot.guildID).channels.get(bot.channelID).send(embed);
             }
