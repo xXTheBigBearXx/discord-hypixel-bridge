@@ -45,7 +45,7 @@ mc.on("message", (chatMsg) => {
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
         if (msgParts.length == 4 && !msg.includes(":")) {
-            client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage(msgParts[2] + " " + msgParts[3]);
+            client.guilds.get(bot.guildID).channels.get(bot.channelID).send(msgParts[2] + " " + msgParts[3]);
             switch (msgParts[3]) {
                 case "joined.":
                     onlineMembers++
@@ -65,13 +65,14 @@ mc.on("message", (chatMsg) => {
             }
 
             if (config.useWebhook == true) {
-                webhookClient.send(sentMsg[1].replace('@','@/'), {
+                webhookClient.send(sentMsg[1], {
+                    disableEveryone: config.mentionEveryone,
                     username: sender,
                     avatarURL: 'https://www.mc-heads.net/avatar/' + sender,
                 });
             } else {
                 let embed = new discord.RichEmbed()
-                    .setAuthor(sender + ": " + sentMsg[1].replace('@','@/'), "https://www.mc-heads.net/avatar/" + sender)
+                    .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
                     .setColor("GREEN");
                 client.guilds.get(bot.guildID).channels.get(bot.channelID).send(embed);
             }
@@ -104,15 +105,15 @@ mc.on("message", (chatMsg) => {
 
         switch (msgParts[i + 1]) {
             case "joined":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " joined the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " joined the guild.");
                 mc.chat("Welcome " + msgParts[i] + "!");
                 break;
             case "left":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " left the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " left the guild.");
                 mc.chat("F");
                 break;
             case "was":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
                 break;
         }
@@ -122,7 +123,7 @@ mc.on("message", (chatMsg) => {
 // Discord Bot
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
-    client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage("Logged In.");
+    client.guilds.get(bot.guildID).channels.get(bot.channelID).send("Logged In.");
 });
 
 client.on("message", (message) => {
