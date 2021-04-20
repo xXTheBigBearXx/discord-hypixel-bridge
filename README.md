@@ -7,3 +7,6 @@ Contains code for posting to a channel when the guild levels up/completes a ques
 
 ## Usage
 **TODO**
+
+
+Original code by Mew: https://github.com/mew/discord-hypixel-bridge

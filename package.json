@@ -7,7 +7,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "colors": "^1.4.0",
-    "discord.js": "^11.6.4",
-    "mineflayer": "^2.40.1"
+    "discord.js": "^11.5.1",
+    "mineflayer": "^2.9.6"
   }
 }

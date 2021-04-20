@@ -1,39 +1,26 @@
 const mineflayer = require("mineflayer");
 const discord = require("discord.js");
-const config = require("./config.json");
+const config = require("./config/config.json");
+const options = require("./config/minecraft.json");
+const bot = require("./config/discord.json");
 require("colors");
 
 const client = new discord.Client({
     autoReconnect: true
 });
-const options = {
-    host: 'mc.hypixel.net',
-    port: 25565,
-    version: '1.8.9',
-    username: config["minecraft-username"],
-    password: config["minecraft-password"],
-};
+const webhookClient = new discord.WebhookClient(bot.webhookID, bot.webhookToken);
 
-// Minecraft bot
-let mc;
-(function init() {
-    console.log("Logging in.");
-    mc = mineflayer.createBot(options);
-    mc._client.once("session", session => options.session = session);
-    mc.once("end", () => {
-        setTimeout(() => {
-            console.log("Connection failed. Retrying..");
-            init();
-        }, 60000);
-    });
-}());
+// Minecraft Bot
+var currentPlayers = 0;
+var onlineMembers = 0;
 
-let uuid;
-let name;
-let playersonline = 0;
+let mc = mineflayer.createBot(options);
+mc.once("end", () => {
+    console.log("Connection failed.");
+    process.exit(0);
+});
+
 mc.on("login", () => {
-    uuid = mc._client.session.selectedProfile.id;
-    name = mc._client.session.selectedProfile.name;
     setTimeout(() => {
         console.log("Sending to limbo.");
         mc.chat("/achat \u00a7c<3");
@@ -42,76 +29,94 @@ mc.on("login", () => {
         console.log("Switching to guild chat. (If not already.)");
         mc.chat("/chat g");
     }, 2000);
-    mc.chat("Logged in")
+    setTimeout(() => {
+        mc.chat("Logged in");
+    }, 3000);
+    setTimeout(() => {
+        mc.chat("/g online");
+    }, 4000);
 });
 
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
+    let msgParts = msg.split(" ");
     console.log("Minecraft: ".brightGreen + msg);
-    if (msg.endsWith(" joined the lobby!") && msg.includes("[MVP+")) {
-        console.log("Sending to limbo.");
-        mc.chat("/achat \u00a7ca");
-        return;
-    }
 
     if (msg.startsWith("Guild >")) {
-        let v = msg.split(" ");
-        // Debug code 
-        // for (var j = 0; j < v.length; j++) {
-        //     console.log(v[j]);
-        // }
-
-        // if (v[2].includes(name + ":") || v[3].includes(name + ":")) return;
-        if (v[2] == "GuildB0t" || v[3] == "GuildB0t") return;
-        // Login messages
-        if (v.length == 4) {
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage(v[2] + " " + v[3]);
-            if (v[3] == "joined.") {
-                playersonline++
-            } else {
-                playersonline--
+        if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
+        if (msgParts.length == 4 && !msg.includes(":")) {
+            client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage(msgParts[2] + " " + msgParts[3]);
+            switch (msgParts[3]) {
+                case "joined.":
+                    onlineMembers++
+                    break;
+                case "left.":
+                    onlineMembers--
+                    break;
             }
         } else {
-            let splitMsg = msg.split(" ");
             let i = msg.indexOf(":");
-            let splitMsg2 = [msg.slice(0, i), msg.slice(i + 1)];
-            let sender, sentMsg;
-            if (splitMsg[2].includes("[")) {
-                sender = splitMsg[3].replace(":", "");
+            let sentMsg = [msg.slice(0, i), msg.slice(i + 1)];
+            let sender;
+            if (msgParts[2].includes("[")) {
+                sender = msgParts[3].replace(":", "");
             } else {
-                sender = splitMsg[2].replace(":", "");
+                sender = msgParts[2].replace(":", "");
             }
-            sentMsg = splitMsg2[1];
 
-            let embed = new discord.RichEmbed()
-                .setAuthor(sender + ": " + sentMsg, "https://www.mc-heads.net/avatar/" + sender)
-                .setColor("GREEN");
-
-
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).send(embed);
+            if (config.useWebhook == true) {
+                webhookClient.send(sentMsg[1].replace('@', '@/'), {
+                    username: sender,
+                    avatarURL: 'https://www.mc-heads.net/avatar/' + sender,
+                });
+            } else {
+                let embed = new discord.RichEmbed()
+                    .setAuthor(sender + ": " + sentMsg[1].replace('@', '@/'), "https://www.mc-heads.net/avatar/" + sender)
+                    .setColor("GREEN");
+                client.guilds.get(bot.guildID).channels.get(bot.channelID).send(embed);
+            }
         }
     }
 
-    // Party accepting and responding.
-    // if (msg.includes(" invited you") && msg.includes(" party")) {
-    //     let p = msg.split(" ");
-    //     if (p[0].includes("[")){
-    //         pl = p[1];
-    //     } else {
-    //         pl = p[0];
-    //     } 
-    //     mc.chat("/p accept " + pl)
-    //     setTimeout(() => {
-    //         mc.chat("/pc no");
-    //     }, 1000);
-    //     setTimeout(() =>{
-    //         mc.chat("/p leave");
-    //     }, 1500);
-    //     setTimeout(() => {
-    //         mc.chat("/achat \u00a7c<3");
-    //     }, 2000);
-    //     return;
-    // }
+    if (msg.startsWith("Online Members")) {
+        onlineMembers = msgParts[2];
+    }
+
+    if (onlineMembers !== currentPlayers) {
+        client.user.setPresence({
+            status: "online", //You can show online, idle....
+            game: {
+                name: onlineMembers + " guild members", //The message shown
+                type: "WATCHING" //PLAYING: WATCHING: LISTENING: STREAMING:
+            }
+        });
+        currentPlayers = onlineMembers
+    }
+
+    // Join/Leave Messages
+    if (msg.includes("the guild") && !msg.includes(":")) {
+        var i;
+        if (msg.startsWith("[")) {
+            i = 1;
+        } else {
+            i = 0;
+        }
+
+        switch (msgParts[i + 1]) {
+            case "joined":
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " joined the guild.");
+                mc.chat("Welcome " + msgParts[i] + "!");
+                break;
+            case "left":
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " left the guild.");
+                mc.chat("F");
+                break;
+            case "was":
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
+                mc.chat("L");
+                break;
+        }
+    }
 
     // Guild Quest completion.
     if (msg.includes(" The guild has completed Tier") && msg.endsWith(" Guild Quest!")) {
@@ -127,47 +132,18 @@ mc.on("message", (chatMsg) => {
         // client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("The Guild has just reached level " + l[5] + "! GG!");
     }
 
-    // Join/Leave Messages
-    if (msg.endsWith("the guild!")) {
-        let j = msg.split(" ");
-        var k;
-        if (msg.startsWith("[")) {
-            k = 1;
-        } else {
-            k = 0;
-        }
-
-        if (j[k + 1] == "joined") {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " joined the guild.");
-            mc.chat("Welcome " + j[k] + "!");
-        } else {
-            client.guilds.get(config["discord-guild"]).channels.get(config["log-channel"]).sendMessage(j[k] + " left the guild.");
-        }
-    }
 });
 
-// Discord bot
+// Discord Bot
 client.on("ready", () => {
     console.log("Discord: Logged in.".bgBlue);
-    client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("Logged In.");
+    client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage("Logged In.");
 });
 
 client.on("message", (message) => {
-    let args = message.content.split(' ');
-    if (message.channel.id !== config["chat-channel"] || message.author.bot) return;
-    if (message.content.startsWith(config["discord-bot-prefix"])) {
-        if (message.content.startsWith("-setonline") && message.author.id == "109246144046972928") {
-            playersonline = args[1];
-        }
-        if (message.content.startsWith("-list")) {
-            client.guilds.get(config["discord-guild"]).channels.get(config["chat-channel"]).sendMessage("There are currently " + playersonline + " players online!");
-        }
-        return;
-    }
-    if (message.content.startsWith(config["discord-bot-prefix"])) return;
+    if (message.channel.id !== bot.channelID || message.author.bot || message.content.startsWith(config.prefix)) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat(client.guilds.get(config["discord-guild"]).member(message.author).displayName + ": " + message.content);
-
+    mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
 });
 
-client.login(config["discord-token"]);
+client.login(bot.token);
