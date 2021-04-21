@@ -17,12 +17,14 @@ client.on("ready", () => {
 });
 
 var currentPlayers = 0;
-var onlineMembers = 0;
+var onlinePlayers = 0;
+var onlineMembers = [];
 
 // Start Minecraft Bot
 let mc = mineflayer.createBot(options);
 
 mc.on("login", () => {
+
     setTimeout(() => {
         console.log("Switching to guild chat. (If not already.)");
         mc.chat("/chat g");
@@ -35,7 +37,7 @@ mc.on("login", () => {
     }, 3000);
     setTimeout(() => {
         console.log("Sending to limbo.");
-        mc.chat("/achat \u00a7c<3");
+        // mc.chat("/achat \u00a7c<3");
     }, 4000);
 });
 
@@ -43,23 +45,17 @@ mc.on("login", () => {
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
     let msgParts = msg.split(" ");
-    console.log("Minecraft: ".brightGreen + msg);
+    // console.log("Minecraft: ".brightGreen + msg);
 
-    // if (msg.includes(" xXTheBigBearXx:") && msg.includes(" -list")) {
-    //     mc.chat("/g list");
-    //     setTimeout(() => {
-    //         mc.chat("/w xxthebigbearxx Printing member list");
-    //     }, 1000);
-    // }
+    if (msg.includes("●")) {
+        let listmsg = msg.split("●");
 
-    // if (msg.includes("●")) {
-    //     console.log("1")
-    //     return;
-    // //     let listmsg = msg.split("●");
-    // //      listmsg.forEach((k) => {
-    // //         console.log(listmsg[k]);
-    // //     });
-    // }
+        for (k = 0; k < listmsg.length; k++) {
+            console.log(listmsg[k].replace(/\s/g, ""));
+            onlineMembers = onlineMembers.concat(listmsg[k].replace(/\[.{1,}\]/g, "").replace(/\s/g, ""));
+        };
+        console.log(onlineMembers)
+    } // each line is new message so it resets the variable each time, but does seem able to record each name
 
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
@@ -67,10 +63,10 @@ mc.on("message", (chatMsg) => {
             client.guilds.get(bot.guildID).channels.get(bot.channelID).send(msgParts[2] + " " + msgParts[3]);
             switch (msgParts[3]) {
                 case "joined.":
-                    onlineMembers++
+                    onlinePlayers++
                     break;
                 case "left.":
-                    onlineMembers--
+                    onlinePlayers--
                     break;
             }
         } else {
@@ -99,18 +95,18 @@ mc.on("message", (chatMsg) => {
     }
 
     if (msg.startsWith("Online Members")) {
-        onlineMembers = msgParts[2];
+        onlinePlayers = msgParts[2];
     }
 
-    if (onlineMembers !== currentPlayers) {
+    if (onlinePlayers !== currentPlayers) {
         client.user.setPresence({
             status: "online", //You can show online, idle....
             game: {
-                name: onlineMembers + " guild members", //The message shown
+                name: onlinePlayers + " guild members", //The message shown
                 type: "WATCHING" //PLAYING: WATCHING: LISTENING: STREAMING:
             }
         });
-        currentPlayers = onlineMembers
+        currentPlayers = onlinePlayers
     }
 
     // Join/Leave Messages
@@ -171,9 +167,22 @@ mc.once("end", (error) => {
 
 // Discord > Minecraft
 client.on("message", (message) => {
-    if (message.channel.id !== bot.channelID || message.author.bot || message.content.startsWith(config.prefix)) return;
+    if (message.channel.id !== bot.channelID || message.author.bot) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
     mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
+
+    let msgParts = message.content.split(' ');
+    if (message.content.startsWith(config.prefix)) {
+        switch (msgParts[0]) {
+            case "-online":
+                mc.chat("/gonline")
+                client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers.replace(",", " "))
+                onlineMembers = []
+                break;
+            case "-logout":
+                process.exit(0);
+        }
+    }
 });
 
 client.login(bot.token);
