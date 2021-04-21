@@ -10,33 +10,36 @@ const client = new discord.Client({
 });
 const webhookClient = new discord.WebhookClient(bot.webhookID, bot.webhookToken);
 
-// Minecraft Bot
+// Start Discord Bot
+client.on("ready", () => {
+    console.log("Discord: Logged in.".bgBlue);
+    client.guilds.get(bot.guildID).channels.get(bot.channelID).send("Logged In.");
+});
+
 var currentPlayers = 0;
 var onlineMembers = 0;
 
+// Start Minecraft Bot
 let mc = mineflayer.createBot(options);
-mc.once("end", () => {
-    console.log("Connection failed.");
-    process.exit(0);
-});
 
 mc.on("login", () => {
     setTimeout(() => {
-        console.log("Sending to limbo.");
-        mc.chat("/achat \u00a7c<3");
-    }, 1000);
-    setTimeout(() => {
         console.log("Switching to guild chat. (If not already.)");
         mc.chat("/chat g");
-    }, 2000);
+    }, 1000);
     setTimeout(() => {
         mc.chat("Logged in");
-    }, 3000);
+    }, 2000);
     setTimeout(() => {
         mc.chat("/g online");
+    }, 3000);
+    setTimeout(() => {
+        console.log("Sending to limbo.");
+        mc.chat("/achat \u00a7c<3");
     }, 4000);
 });
 
+// Minecraft > Discord
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
     let msgParts = msg.split(" ");
@@ -61,7 +64,7 @@ mc.on("message", (chatMsg) => {
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
         if (msgParts.length == 4 && !msg.includes(":")) {
-            client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage(msgParts[2] + " " + msgParts[3]);
+            client.guilds.get(bot.guildID).channels.get(bot.channelID).send(msgParts[2] + " " + msgParts[3]);
             switch (msgParts[3]) {
                 case "joined.":
                     onlineMembers++
@@ -81,13 +84,14 @@ mc.on("message", (chatMsg) => {
             }
 
             if (config.useWebhook == true) {
-                webhookClient.send(sentMsg[1].replace('@', '@/'), {
+                webhookClient.send(sentMsg[1], {
+                    disableEveryone: config.mentionEveryone,
                     username: sender,
                     avatarURL: 'https://www.mc-heads.net/avatar/' + sender,
                 });
             } else {
                 let embed = new discord.RichEmbed()
-                    .setAuthor(sender + ": " + sentMsg[1].replace('@', '@/'), "https://www.mc-heads.net/avatar/" + sender)
+                    .setAuthor(sender + ": " + sentMsg[1], "https://www.mc-heads.net/avatar/" + sender)
                     .setColor("GREEN");
                 client.guilds.get(bot.guildID).channels.get(bot.channelID).send(embed);
             }
@@ -120,27 +124,52 @@ mc.on("message", (chatMsg) => {
 
         switch (msgParts[i + 1]) {
             case "joined":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " joined the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " joined the guild.");
                 mc.chat("Welcome " + msgParts[i] + "!");
                 break;
             case "left":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " left the guild.");
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " left the guild.");
                 mc.chat("F");
                 break;
             case "was":
-                client.guilds.get(bot.guildID).channels.get(bot.logChannel).sendMessage(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
+                client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
                 break;
         }
     }
 });
 
-// Discord Bot
-client.on("ready", () => {
-    console.log("Discord: Logged in.".bgBlue);
-    client.guilds.get(bot.guildID).channels.get(bot.channelID).sendMessage("Logged In.");
+// Error Handling
+
+mc.on("error", (error) => {
+    console.log("Connection lost.");
+    console.log(error);
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection lost with error: " + error);
+    setTimeout(()=> {
+        process.exit(1);
+    }, 5000);
 });
 
+mc.on("kicked", (reason) => {
+    console.log("Bot kicked.");
+    console.log(reason);
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Bot kicked with reason: " + reason);
+    setTimeout(()=> {
+        process.exit(1);
+    }, 5000);
+});
+
+mc.once("end", (error) => {
+    console.log("Connection ended.");
+    console.log(error);
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
+    setTimeout(()=> {
+        process.exit(1);
+    }, 5000);
+});
+
+
+// Discord > Minecraft
 client.on("message", (message) => {
     if (message.channel.id !== bot.channelID || message.author.bot || message.content.startsWith(config.prefix)) return;
     console.log("Discord: ".blue + message.author.username + ": " + message.content);
