@@ -110,10 +110,12 @@ mc.on("message", (chatMsg) => {
             case "joined":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " joined the guild.");
                 mc.chat("Welcome " + msgParts[i] + "!");
+                onlineMembers++
                 break;
             case "left":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " left the guild.");
                 mc.chat("F");
+                onlineMembers--
                 break;
             case "was":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
