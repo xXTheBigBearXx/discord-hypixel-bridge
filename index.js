@@ -24,7 +24,6 @@ var onlineMembers = [];
 let mc = mineflayer.createBot(options);
 
 mc.on("login", () => {
-
     setTimeout(() => {
         console.log("Switching to guild chat. (If not already.)");
         mc.chat("/chat g");
@@ -37,7 +36,7 @@ mc.on("login", () => {
     }, 3000);
     setTimeout(() => {
         console.log("Sending to limbo.");
-        // mc.chat("/achat \u00a7c<3");
+        mc.chat("/achat \u00a7c<3");
     }, 4000);
 });
 
@@ -52,7 +51,7 @@ mc.on("message", (chatMsg) => {
 
         for (k = 0; k < listmsg.length; k++) {
             console.log(listmsg[k].replace(/\s/g, ""));
-            onlineMembers = onlineMembers.concat(listmsg[k].replace(/\[.{1,}\]/g, "").replace(/\s/g, ""));
+            onlineMembers = onlineMembers.concat((listmsg[k] + " ").replace(/\[.{1,}\]/g, "").replace(/\s/g, "")).filter(Boolean);
         };
         console.log(onlineMembers)
     } // each line is new message so it resets the variable each time, but does seem able to record each name
@@ -175,8 +174,8 @@ client.on("message", (message) => {
     if (message.content.startsWith(config.prefix)) {
         switch (msgParts[0]) {
             case "-online":
-                mc.chat("/gonline")
-                client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers.replace(",", " "))
+                mc.chat("/g online")
+                client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
                 onlineMembers = []
                 break;
             case "-logout":
