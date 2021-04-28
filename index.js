@@ -120,6 +120,7 @@ mc.on("message", (chatMsg) => {
             case "was":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
+                onlineMembers--
                 break;
         }
     }
@@ -131,7 +132,7 @@ mc.on("error", (error) => {
     console.log("Connection lost.");
     console.log(error);
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection lost with error: " + error);
-    setTimeout(()=> {
+    setTimeout(() => {
         process.exit(1);
     }, 5000);
 });
@@ -140,7 +141,7 @@ mc.on("kicked", (reason) => {
     console.log("Bot kicked.");
     console.log(reason);
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Bot kicked with reason: " + reason);
-    setTimeout(()=> {
+    setTimeout(() => {
         process.exit(1);
     }, 5000);
 });
@@ -149,7 +150,7 @@ mc.once("end", (error) => {
     console.log("Connection ended.");
     console.log(error);
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
-    setTimeout(()=> {
+    setTimeout(() => {
         process.exit(1);
     }, 5000);
 });
