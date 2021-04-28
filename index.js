@@ -167,10 +167,8 @@ mc.once("end", (error) => {
 // Discord > Minecraft
 client.on("message", (message) => {
     if (message.channel.id !== bot.channelID || message.author.bot) return;
-    console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
-
     let msgParts = message.content.split(' ');
+    
     if (message.content.startsWith(config.prefix)) {
         switch (msgParts[0]) {
             case "-online":
@@ -181,6 +179,9 @@ client.on("message", (message) => {
             case "-logout":
                 process.exit(0);
         }
+    } else {
+    console.log("Discord: ".blue + message.author.username + ": " + message.content);
+    mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
     }
 });
 
