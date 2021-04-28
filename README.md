@@ -2,8 +2,6 @@
 Bridges a Discord channel chat with Hypixel Guild Chat.  
 WIP (Seems to work for now?)
 
-some broken code for listing guild members
-
 ## Usage
 **TODO**
 
