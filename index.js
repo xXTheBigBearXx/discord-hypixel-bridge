@@ -44,17 +44,15 @@ mc.on("login", () => {
 mc.on("message", (chatMsg) => {
     const msg = chatMsg.toString();
     let msgParts = msg.split(" ");
-    // console.log("Minecraft: ".brightGreen + msg);
+    console.log("Minecraft: ".brightGreen + msg);
 
     if (msg.includes("●")) {
-        let listmsg = msg.split("●");
+        let listMsg = msg.split("●");
 
-        for (k = 0; k < listmsg.length; k++) {
-            console.log(listmsg[k].replace(/\s/g, ""));
-            onlineMembers = onlineMembers.concat((listmsg[k] + " ").replace(/\[.{1,}\]/g, "").replace(/\s/g, "")).filter(Boolean);
+        for (k = 0; k < listMsg.length; k++) {
+            onlineMembers = onlineMembers.concat(listMsg[k].replace(/\[.{1,}\]/g, "").replace(/\s/g, "")).filter(Boolean);
         };
-        console.log(onlineMembers)
-    } // each line is new message so it resets the variable each time, but does seem able to record each name
+    }
 
     if (msg.startsWith("Guild >")) {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)) return;
@@ -135,7 +133,6 @@ mc.on("message", (chatMsg) => {
 });
 
 // Error Handling
-
 mc.on("error", (error) => {
     console.log("Connection lost.");
     console.log(error);
