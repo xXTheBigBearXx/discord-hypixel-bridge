@@ -142,7 +142,7 @@ mc.on("error", (error) => {
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection lost with error: " + error);
     setTimeout(() => {
         process.exit(1);
-    }, 5000);
+    }, 10000);
 });
 
 mc.on("kicked", (reason) => {
@@ -151,7 +151,7 @@ mc.on("kicked", (reason) => {
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Bot kicked with reason: " + reason);
     setTimeout(() => {
         process.exit(1);
-    }, 5000);
+    }, 10000);
 });
 
 mc.once("end", (error) => {
@@ -160,7 +160,7 @@ mc.once("end", (error) => {
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
     setTimeout(() => {
         process.exit(1);
-    }, 5000);
+    }, 10000);
 });
 
 
