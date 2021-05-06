@@ -172,9 +172,9 @@ client.on("message", (message) => {
     if (message.content.startsWith(config.prefix)) {
         switch (msgParts[0]) {
             case "-online":
+                onlineMembers = []
                 mc.chat("/g online")
                 client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
-                onlineMembers = []
                 break;
             case "-logout":
                 process.exit(0);
