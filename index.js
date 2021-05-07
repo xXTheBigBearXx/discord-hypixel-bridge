@@ -174,7 +174,9 @@ client.on("message", (message) => {
             case "-online":
                 onlineMembers = []
                 mc.chat("/g online")
-                client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
+                setTimeout (() => {
+                    client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
+                }, 2000);
                 break;
             case "-logout":
                 process.exit(0);
