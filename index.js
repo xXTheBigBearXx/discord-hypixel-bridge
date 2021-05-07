@@ -119,17 +119,17 @@ mc.on("message", (chatMsg) => {
             case "joined":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " joined the guild.");
                 mc.chat("Welcome " + msgParts[i] + "!");
-                onlineMembers++
+                onlinePlayers++
                 break;
             case "left":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " left the guild.");
                 mc.chat("F");
-                onlineMembers--
+                onlinePlayers--
                 break;
             case "was":
                 client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(msgParts[i] + " was kicked from the guild by " + msgParts[msgParts.length - 1].replace('!', '.'));
                 mc.chat("L");
-                onlineMembers--
+                onlinePlayers--
                 break;
         }
     }
@@ -172,9 +172,11 @@ client.on("message", (message) => {
     if (message.content.startsWith(config.prefix)) {
         switch (msgParts[0]) {
             case "-online":
-                mc.chat("/g online")
-                client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
                 onlineMembers = []
+                mc.chat("/g online")
+                setTimeout (() => {
+                    client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
+                }, 2000);
                 break;
             case "-logout":
                 process.exit(0);
