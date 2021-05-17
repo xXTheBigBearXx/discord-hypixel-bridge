@@ -157,6 +157,7 @@ mc.on("kicked", (reason) => {
 mc.once("end", (error) => {
     console.log("Connection ended.");
     console.log(error);
+    if (error == "undefined") return; 
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
     setTimeout(() => {
         process.exit(1);
