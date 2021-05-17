@@ -139,29 +139,31 @@ mc.on("message", (chatMsg) => {
 mc.on("error", (error) => {
     console.log("Connection lost.");
     console.log(error);
-    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection lost with error: " + error);
     setTimeout(() => {
         process.exit(1);
     }, 10000);
+    if (error === undefined) return;
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection lost with error: " + error);
 });
 
 mc.on("kicked", (reason) => {
     console.log("Bot kicked.");
     console.log(reason);
-    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Bot kicked with reason: " + reason);
     setTimeout(() => {
         process.exit(1);
     }, 10000);
+    if (reason === undefined) return;
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Bot kicked with reason: " + reason);
 });
 
 mc.once("end", (error) => {
     console.log("Connection ended.");
     console.log(error);
-    if (error === undefined) return; 
-    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
     setTimeout(() => {
         process.exit(1);
     }, 10000);
+    if (error === undefined) return; 
+    client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
 });
 
 
