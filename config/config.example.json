@@ -1,6 +1,7 @@
 {
   "useWebhook": false,
   "mentionEveryone": false,
+  "memberRole": "Discord role for guild members",
 
   "prefix": "-" 
 }
