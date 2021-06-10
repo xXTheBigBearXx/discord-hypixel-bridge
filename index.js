@@ -175,7 +175,7 @@ mc.once("end", (error) => {
     setTimeout(() => {
         process.exit(1);
     }, 10000);
-    if (error === undefined) return; 
+    if (error === undefined) return;
     client.guilds.get(bot.guildID).channels.get(bot.logChannel).send("Connection ended with error: " + error);
 });
 
@@ -184,13 +184,13 @@ mc.once("end", (error) => {
 client.on("message", (message) => {
     if (message.channel.id !== bot.channelID || message.author.bot) return;
     let msgParts = message.content.split(' ');
-    
+
     if (message.content.startsWith(config.prefix)) {
         switch (msgParts[0]) {
             case "-online":
                 onlineMembers = []
                 mc.chat("/g online")
-                setTimeout (() => {
+                setTimeout(() => {
                     client.guilds.get(bot.guildID).channels.get(bot.channelID).send("The currently online guild members are: " + onlineMembers)
                 }, 2000);
                 break;
@@ -198,8 +198,8 @@ client.on("message", (message) => {
                 process.exit(0);
         }
     } else {
-    console.log("Discord: ".blue + message.author.username + ": " + message.content);
-    mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
+        console.log("Discord: ".blue + message.author.username + ": " + message.content);
+        mc.chat(client.guilds.get(bot.guildID).member(message.author).displayName + ": " + message.content);
     }
 });
 
