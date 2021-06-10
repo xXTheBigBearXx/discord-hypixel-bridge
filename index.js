@@ -133,6 +133,19 @@ mc.on("message", (chatMsg) => {
                 break;
         }
     }
+            //alfie is editing this
+    if (msg.includes("!verify")) {
+        if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)){
+            var username = msgParts[4];
+            var discTag = msgParts[5];
+            let role = message.guild.roles.find(role => role.name === 'Member');
+            let member = message.mentions.members.first();
+            member.roles.add(role).catch(console.error);
+            client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(username + " executed the command !verify " + discTag);
+            client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(discTag + " was given the role" + role);
+        }
+    }
+
 });
 
 // Error Handling
