@@ -138,7 +138,7 @@ mc.on("message", (chatMsg) => {
         if (msgParts[2].includes(mc.username) || msgParts[3].includes(mc.username)){
             var username = msgParts[4];
             var discTag = msgParts[5];
-            let role = message.guild.roles.find(role => role.name === (config.memberRole);
+            let role = message.guild.roles.find(role => role.name === (config.memberRole));
             let member = message.mentions.members.first();
             member.roles.add(role).catch(console.error);
             client.guilds.get(bot.guildID).channels.get(bot.logChannel).send(username + " executed the command !verify " + discTag);
