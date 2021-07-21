@@ -1,5 +1,6 @@
 {
   "useWebhook": false,
-  
+  "mentionEveryone": false,
+
   "prefix": "-" 
 }
